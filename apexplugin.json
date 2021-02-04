@@ -1,6 +1,6 @@
 {
     "name": "APEX Percent Bargraphs",
-    "version": "1.0.3",
+    "version": "1.1",
     "description": "The plug - in draws some nice percent bargraphs in APEX or in native HTML page. It was mainly created for the demo at the DOAG Webinar on 01.02.2019 - https://dlvr.it/Qwzkw9. However, it can be used at any time. Login for Demo is: user-demo / 123456@",
     "keywords": ["oracle", "apex", "plugin", "region", "responsive"],
     "homepage": "https://github.com/RonnyWeiss/APEX-Percent-Bargraphs",

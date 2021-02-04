@@ -1,28 +1,12 @@
 var apexSkillBar = (function () {
     "use strict";
-    var scriptVersion = "1.0.3";
     var util = {
-        version: "1.3.2",
-        isAPEX: function () {
-            if (typeof (apex) !== 'undefined') {
-                return true;
-            } else {
-                return false;
-            }
-        },
-        debug: {
-            info: function (str) {
-                if (util.isAPEX()) {
-                    apex.debug.info(str);
-                }
-            },
-            error: function (str) {
-                if (util.isAPEX()) {
-                    apex.debug.error(str);
-                } else {
-                    console.error(str);
-                }
-            }
+        featureDetails: {
+            name: "APEX Percent Bargraph",
+            scriptVersion: "1.1",
+            utilVersion: "1.4",
+            url: "https://github.com/RonnyWeiss",
+            license: "MIT"
         },
         escapeHTML: function (str) {
             if (str === null) {
@@ -38,47 +22,14 @@ var apexSkillBar = (function () {
                     /*do nothing */
                 }
             }
-            if (util.isAPEX()) {
-                return apex.util.escapeHTML(String(str));
-            } else {
-                str = String(str);
-                return str
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#x27;")
-                    .replace(/\//g, "&#x2F;");
-            }
+            return apex.util.escapeHTML(String(str));
         },
         loader: {
             start: function (id, setMinHeight) {
                 if (setMinHeight) {
                     $(id).css("min-height", "100px");
                 }
-                if (util.isAPEX()) {
-                    apex.util.showSpinner($(id));
-                } else {
-                    /* define loader */
-                    var faLoader = $("<span></span>");
-                    faLoader.attr("id", "loader" + id);
-                    faLoader.addClass("ct-loader");
-                    faLoader.css("text-align", "center");
-                    faLoader.css("width", "100%");
-                    faLoader.css("display", "block");
-
-                    /* define refresh icon with animation */
-                    var faRefresh = $("<i></i>");
-                    faRefresh.addClass("fa fa-refresh fa-2x fa-anim-spin");
-                    faRefresh.css("background", "rgba(121,121,121,0.6)");
-                    faRefresh.css("border-radius", "100%");
-                    faRefresh.css("padding", "15px");
-                    faRefresh.css("color", "white");
-
-                    /* append loader */
-                    faLoader.append(faRefresh);
-                    $(id).append(faLoader);
-                }
+                apex.util.showSpinner($(id));
             },
             stop: function (id, removeMinHeight) {
                 if (removeMinHeight) {
@@ -90,39 +41,65 @@ var apexSkillBar = (function () {
         },
         printDOMMessage: {
             show: function (id, text, icon, color) {
-                var div = $("<div></div>")
-                    .css("margin", "12px")
-                    .css("text-align", "center")
-                    .css("padding", "35px 0")
-                    .addClass("dominfomessagediv");
+                if ($(id).height() >= 150) {
+                    var div = $("<div></div>")
+                        .css("margin", "12px")
+                        .css("text-align", "center")
+                        .css("padding", "10px 0")
+                        .addClass("dominfomessagediv");
 
-                var subDiv = $("<div></div>");
+                    var subDiv = $("<div></div>");
 
-                var subDivSpan = $("<span></span>")
-                    .addClass("fa")
-                    .addClass(icon || "fa-info-circle-o")
-                    .addClass("fa-2x")
-                    .css("height", "32px")
-                    .css("width", "32px")
-                    .css("color", "#D0D0D0")
-                    .css("margin-bottom", "16px")
-                    .css("color", color || "inhherit");
+                    var iconSpan = $("<span></span>")
+                        .addClass("fa")
+                        .addClass(icon || "fa-info-circle-o")
+                        .addClass("fa-2x")
+                        .css("height", "32px")
+                        .css("width", "32px")
+                        .css("margin-bottom", "16px")
+                        .css("color", color || "#D0D0D0");
 
-                subDiv.append(subDivSpan);
+                    subDiv.append(iconSpan);
 
-                var span = $("<span></span>")
-                    .text(text)
-                    .css("display", "block")
-                    .css("color", "#707070")
-                    .css("text-overflow", "ellipsis")
-                    .css("overflow", "hidden")
-                    .css("white-space", "nowrap")
-                    .css("font-size", "12px");
+                    var textSpan = $("<span></span>")
+                        .text(text)
+                        .css("display", "block")
+                        .css("color", "#707070")
+                        .css("text-overflow", "ellipsis")
+                        .css("overflow", "hidden")
+                        .css("white-space", "nowrap")
+                        .css("font-size", "12px");
 
-                div
-                    .append(subDiv)
-                    .append(span);
+                    div
+                        .append(subDiv)
+                        .append(textSpan);
+                } else {
+                    var div = $("<div></div>")
+                        .css("margin", "10px")
+                        .css("text-align", "center")
+                        .addClass("dominfomessagediv");
 
+                    var iconSpan = $("<span></span>")
+                        .addClass("fa")
+                        .addClass(icon || "fa-info-circle-o")
+                        .css("font-size", "22px")
+                        .css("line-height", "26px")
+                        .css("margin-right", "5px")
+                        .css("color", color || "#D0D0D0");
+
+                    var textSpan = $("<span></span>")
+                        .text(text)
+                        .css("color", "#707070")
+                        .css("text-overflow", "ellipsis")
+                        .css("overflow", "hidden")
+                        .css("white-space", "nowrap")
+                        .css("font-size", "12px")
+                        .css("line-height", "20px");
+
+                    div
+                        .append(iconSpan)
+                        .append(textSpan);
+                }
                 $(id).append(div);
             },
             hide: function (id) {
@@ -144,8 +121,17 @@ var apexSkillBar = (function () {
      **
      ***********************************************************************/
     function renderHTML(pParentID, pData, pEscapeHTML) {
-        var value = 0;
+
+        apex.debug.info({
+            "fct": util.featureDetails.name + " - " + "renderHTML",
+            "pParentID": pParentID,
+            "pData": pData,
+            "pEscapeHTML": pEscapeHTML,
+            "featureDetails": util.featureDetails
+        });
+
         $.each(pData, function (idx, data) {
+            var value = 0;
             if (data.VALUE && data.VALUE <= 100 && data.VALUE >= 0) {
                 value = data.VALUE
             }
@@ -221,7 +207,21 @@ var apexSkillBar = (function () {
     }
 
     return {
-        render: function (regionID, ajaxID, noDataFoundMessage, items2Submit, escapeRequired, refreshTime, offlineData) {
+        render: function (regionID, ajaxID, noDataFoundMessage, items2Submit, escapeRequired, refreshTime) {
+
+            apex.debug.info({
+                "fct": util.featureDetails.name + " - " + "initialize",
+                "arguments": {
+                    "regionID": regionID,
+                    "ajaxID": ajaxID,
+                    "noDataFoundMessage": noDataFoundMessage,
+                    "items2Submit": items2Submit,
+                    "escapeRequired": escapeRequired,
+                    "refreshTime": refreshTime
+                },
+                "featureDetails": util.featureDetails
+            });
+
             var parentID = "#" + regionID + "-p";
 
             /************************************************************************
@@ -230,7 +230,7 @@ var apexSkillBar = (function () {
              **
              ***********************************************************************/
             function getData() {
-                $(parentID).css("min-height", "120px");
+                $(parentID).css("min-height", "150px");
                 util.loader.start(parentID);
 
                 var submitItems = items2Submit;
@@ -240,27 +240,32 @@ var apexSkillBar = (function () {
                             pageItems: submitItems
                         }, {
                             success: function (pData) {
+                                apex.debug.info({
+                                    "fct": util.featureDetails.name + " - " + "getData",
+                                    "msg": "AJAX data received",
+                                    "pData": pData,
+                                    "featureDetails": util.featureDetails
+                                });
                                 prepareData(parentID, pData, noDataFoundMessage, escapeRequired)
                             },
                             error: function (d) {
-                                console.error(d.responseText);
+                                apex.debug.error({
+                                    "fct": util.featureDetails.name + " - " + "getData",
+                                    "msg": "AJAX data error",
+                                    "response": d,
+                                    "featureDetails": util.featureDetails
+                                });
                             },
                             dataType: "json"
                         });
                 } catch (e) {
-                    console.error("Error while try to get Data from APEX");
-                    console.error(e);
-                    // try to work offline
-                    try {
-                        if (offlineData) {
-                            prepareData(parentID, offlineData, noDataFoundMessage, escapeRequired);
-                        }
-                    } catch (e) {
-                        console.error("Error while try to run native mode");
-                        console.error(e);
-                    }
+                    apex.debug.error({
+                        "fct": util.featureDetails.name + " - " + "getData",
+                        "msg": "Error while try to get Data from APEX",
+                        "err": e,
+                        "featureDetails": util.featureDetails
+                    });
                 }
-
             }
 
             // load data
@@ -276,8 +281,12 @@ var apexSkillBar = (function () {
                     getData();
                 });
             } catch (e) {
-                console.error("Error while try to bind APEX refresh event");
-                console.error(e);
+                apex.debug.error({
+                    "fct": util.featureDetails.name + " - " + "initialize",
+                    "msg": "Error while try to bind APEX refresh event",
+                    "err": e,
+                    "featureDetails": util.featureDetails
+                });
             }
 
             /************************************************************************
@@ -292,5 +301,4 @@ var apexSkillBar = (function () {
             }
         }
     }
-
 })();
